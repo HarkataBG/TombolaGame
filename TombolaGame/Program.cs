@@ -4,6 +4,10 @@ using TombolaGame.Data;
 using TombolaGame.Repositories.Contracts;
 using TombolaGame.Repositories;
 using TombolaGame.Services;
+using MassTransit;
+using TombolaGame.WinnerSelection;
+using TombolaGame.WinnerSelection.Strategies;
+using TombolaGame.WinnerSelector.Strategies;
 
 namespace TombolaGame
 {
@@ -12,6 +16,18 @@ namespace TombolaGame
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddMassTransit(x =>
+            {
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    cfg.Host("localhost", "/", h =>
+                    {
+                        h.Username("guest");
+                        h.Password("guest");
+                    });
+                });
+            });
 
             // Add services to the container.
 
@@ -33,6 +49,11 @@ namespace TombolaGame
             builder.Services.AddScoped<IAwardRepository, AwardRepository>();
             builder.Services.AddScoped<ITombolaRepository, TombolaRepository>();
 
+            builder.Services.AddScoped<RandomSelectionStrategy>();
+            builder.Services.AddScoped<WeightedSelectionStrategy>();
+            builder.Services.AddScoped<OnePrizePerPlayerStrategy>();
+            builder.Services.AddScoped<IWinnerSelectionStrategyFactory, WinnerSelectionStrategyFactory>();
+            builder.Services.AddScoped<IWinnerSelectionService, WinnerSelectionService>();
 
             var app = builder.Build();
 

@@ -15,15 +15,20 @@ public class TombolaService : ITombolaService
         _playerRepository = playerRepository;
     }
 
-    public async Task<Tombola> CreateTombolaAsync(string name)
+    public async Task<Tombola> CreateTombolaAsync(string name, string strategyType)
     {
-        var tombola = new Tombola { Name = name };
+        var tombola = new Tombola { Name = name, StrategyType = strategyType };
         return await _tombolaRepository.AddAsync(tombola);
     }
 
     public async Task<IEnumerable<Tombola>> GetTombolasAsync()
     {
         return await _tombolaRepository.GetAllAsync();
+    }
+
+    public async Task<Tombola> GetTombolaById(int tombolaId)
+    {
+        return await _tombolaRepository.GetByIdAsync(tombolaId);
     }
 
     public async Task<Tombola?> AddPlayerToTombolaAsync(int tombolaId, Player player)

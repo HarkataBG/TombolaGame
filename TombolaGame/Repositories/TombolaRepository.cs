@@ -21,6 +21,7 @@ public class TombolaRepository : ITombolaRepository
         return await _context.Tombolas
             .Include(t => t.Players)
             .Include(t => t.Awards)
+            .Include(t => t.Winners)
             .ToListAsync();
     }
 
@@ -29,6 +30,7 @@ public class TombolaRepository : ITombolaRepository
         return await _context.Tombolas
             .Include(t => t.Players)
             .Include(t => t.Awards)
+            .Include(t => t.Winners)
             .FirstOrDefaultAsync(t => t.Id == id);
     }
 
