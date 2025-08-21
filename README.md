@@ -28,6 +28,8 @@ The project uses:
   - Add players to a tombola  
   - Add awards to a tombola  
   - Draw players randomly to assign awards
+ 
+ -> If tombola reaches maximum capacity of players - it begins automatically
 
 ---
 
