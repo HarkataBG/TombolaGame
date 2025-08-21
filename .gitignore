@@ -31,9 +31,6 @@ _ReSharper*/
 *.log
 logs/
 
-## Entity Framework Migrations
-Migrations/
-
 ## dotenv (if you use it)
 .env
 
