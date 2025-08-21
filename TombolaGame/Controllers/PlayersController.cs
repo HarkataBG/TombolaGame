@@ -37,7 +37,7 @@ public class PlayersController : ControllerBase
     public async Task<IActionResult> UpdatePlayer(int id, [FromBody] PlayerRequest request)
     {
         var updated = await _playerService.UpdatePlayerAsync(id, request);
-        return Ok(updated);
+        return Accepted(updated);
     }
 
     [HttpDelete("{id}")]

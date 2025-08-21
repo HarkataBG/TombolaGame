@@ -29,13 +29,15 @@ namespace TombolaGame.Services
                 winners.Add(new TombolaWinner
                 {
                     TombolaId = tombola.Id,
-                    PlayerId = player.Id
+                    PlayerId = player.Id,
+                    AwardId = award.Id
                 });
 
                 await _publishEndpoint.Publish(new WinnerSelectedEvent(
                     tombola.Id,
                     player.Id,
-                    player.Name
+                    player.Name,
+                    award.Id
                 ));
             }
 

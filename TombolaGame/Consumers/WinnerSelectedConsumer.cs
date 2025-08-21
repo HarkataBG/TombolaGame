@@ -40,11 +40,7 @@ public class WinnerSelectedConsumer : IConsumer<WinnerSelectedEvent>
         {
             TombolaId = tombola.Id,
             PlayerId = message.PlayerId,
-            Player = new Player
-            {
-                Id = message.PlayerId,
-                Name = message.PlayerName
-            }
+            AwardId = message.AwardId
         });
 
         await _dbContext.SaveChangesAsync();

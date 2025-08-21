@@ -35,9 +35,12 @@ namespace TombolaGame.Helpers
 
                 PlayerNames = tombola.Players.Select(p => p.Name).ToList(),
                 AwardNames = tombola.Awards.Select(a => a.Name).ToList(),
-                WinnerNames = tombola.Winners
-                    .Select(w => w.Player.Name)
-                    .ToList()
+                Winners = tombola.Winners
+                .Select(w => new WinnerWithAwardResponse
+                {
+                    PlayerName = w.Player.Name,
+                    AwardName = w.Award.Name
+                }).ToList()
             };
         }
 

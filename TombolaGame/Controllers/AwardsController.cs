@@ -43,7 +43,7 @@ public class AwardsController : ControllerBase
             return BadRequest(ModelState);
 
         var updated = await _awardService.UpdateAwardAsync(id, request);
-        return Ok(updated);
+        return Accepted(updated);
     }
 
     [HttpDelete("{id}")]

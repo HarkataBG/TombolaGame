@@ -1,14 +1,13 @@
-
-using Microsoft.EntityFrameworkCore;
-using TombolaGame.Data;
-using TombolaGame.Repositories.Contracts;
-using TombolaGame.Repositories;
-using TombolaGame.Services;
 using MassTransit;
-using TombolaGame.WinnerSelection;
-using TombolaGame.WinnerSelection.Strategies;
-using TombolaGame.WinnerSelector.Strategies;
+using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
+using TombolaGame.Data;
 using TombolaGame.Middlewares;
+using TombolaGame.Repositories;
+using TombolaGame.Repositories.Contracts;
+using TombolaGame.Services;
+using TombolaGame.WinnerSelection;
+using TombolaGame.WinnerSelector.Strategies;
 
 namespace TombolaGame
 {
@@ -32,7 +31,11 @@ namespace TombolaGame
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+             .AddJsonOptions(options =>
+             {
+                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+             });
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 

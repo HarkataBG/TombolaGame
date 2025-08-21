@@ -42,14 +42,14 @@ public class TombolasController : ControllerBase
     public async Task<IActionResult> UpdateTombola(int tombolaId, [FromBody] TombolaRequest request)
     {
         var updated = await _tombolaService.UpdateTombolaAsync(tombolaId, request);  
-        return Ok(updated); 
+        return Accepted(updated); 
     }
 
     [HttpDelete("{tombolaId}")]
     public async Task<IActionResult> DeleteTombola(int tombolaId)
     {
         await _tombolaService.DeleteTombolaAsync(tombolaId);
-        return Ok(new { message = "Tombola deleted successfully." });
+        return Accepted(new { message = "Tombola deleted successfully." });
     }
 
     [HttpPost("{tombolaId}/join")]
@@ -84,7 +84,7 @@ public class TombolasController : ControllerBase
 
         var updatedTombola = await _tombolaService.GetTombolaByIdAsync(tombolaId);
 
-        return Ok(updatedTombola!.WinnerNames);
+        return Ok(updatedTombola!.Winners);
     }
 
 }

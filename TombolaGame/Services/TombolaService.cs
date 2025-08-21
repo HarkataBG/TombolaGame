@@ -88,8 +88,7 @@ namespace TombolaGame.Services
             var player = await _playerRepository.GetByNameAsync(playerName);
             if (player == null)
             {
-                player = new Player { Name = playerName };
-                await _playerRepository.AddAsync(player);
+                throw new InvalidOperationException("Player does not exist.");
             }
 
             if (tombola.Players.Any(p => p.Id == player.Id))

@@ -8,5 +8,8 @@
 
         public int PlayerId { get; set; }
         public Player Player { get; set; } = null!;
+
+        public int AwardId { get; set; }
+        public Award Award { get; set; } = null!;
     }
 }
