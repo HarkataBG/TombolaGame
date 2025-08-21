@@ -64,4 +64,36 @@ The project uses:
 #### Tombola Actions
 - `POST /api/tombola/{id}/add-player/{playerId}` – Add player to tombola  
 - `POST /api/tombola/{id}/add-award/{awardId}` – Add award to tombola  
-- `POST /api/tombola/{id}/draw` – Perform draw (randomly assign awards to players) 
+- `POST /api/tombola/{id}/draw` – Perform draw (randomly assign awards to players)
+
+---
+## 🔑 Enums
+
+### Tombola State
+
+**Waiting (0)**  
+The tombola is created but not started yet.  
+Players and awards can still be added.
+
+**InProgress (1)**  
+The tombola has started and the draw process is ongoing.  
+Players can be drawn and assigned to awards.
+
+**Finished (2)**  
+The tombola is completed.  
+All draws are done, and no more players or awards can be added.
+
+---
+### Strategy Type
+
+**OnePrizePerPlayer (0)**  
+Ensures that each player can only win one prize. Once a player has won, they are excluded from further draws.  
+👉 Useful for fairness in smaller tombolas.
+
+**RandomSelection (1)**  
+Winners are chosen completely at random, without restrictions.  
+👉 A player may win multiple prizes.
+
+**WeightedSelection (2)**  
+Selection is based on weights or probabilities assigned to players.  
+👉 For example, a player with more entries has a higher chance of winning. 
