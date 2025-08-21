@@ -1,6 +1,7 @@
-﻿using TombolaGame.WinnerSelection.Strategies;
+﻿using TombolaGame.Enums;
+using TombolaGame.WinnerSelection.Strategies;
 
 public interface IWinnerSelectionStrategyFactory
 {
-    IWinnerSelectionStrategy GetStrategy(string strategyType);
+    IWinnerSelectionStrategy GetStrategy(StrategyType strategyType);
 }

@@ -1,4 +1,5 @@
-﻿using TombolaGame.WinnerSelection.Strategies;
+﻿using TombolaGame.Enums;
+using TombolaGame.WinnerSelection.Strategies;
 using TombolaGame.WinnerSelector.Strategies;
 
 public class WinnerSelectionStrategyFactory : IWinnerSelectionStrategyFactory
@@ -10,12 +11,12 @@ public class WinnerSelectionStrategyFactory : IWinnerSelectionStrategyFactory
         _serviceProvider = serviceProvider;
     }
 
-    public IWinnerSelectionStrategy GetStrategy(string strategyType)
+    public IWinnerSelectionStrategy GetStrategy(StrategyType strategyType)
     {
         return strategyType switch
         {
-            "Weighted" => _serviceProvider.GetRequiredService<WeightedSelectionStrategy>(),
-            "Random" => _serviceProvider.GetRequiredService<RandomSelectionStrategy>(),
+            StrategyType.WeightedSelection => _serviceProvider.GetRequiredService<WeightedSelectionStrategy>(),
+            StrategyType.RandomSelection => _serviceProvider.GetRequiredService<RandomSelectionStrategy>(),
             _ => _serviceProvider.GetRequiredService<OnePrizePerPlayerStrategy>()
         };
     }

@@ -1,8 +1,10 @@
-﻿using TombolaGame.Exceptions;
+﻿using TombolaGame.Enums;
+using TombolaGame.Exceptions;
 using TombolaGame.Helpers;
 using TombolaGame.Models;
 using TombolaGame.Models.Mappers;
 using TombolaGame.Repositories;
+using TombolaGame.Repositories.Contracts;
 using TombolaGame.WinnerSelection;
 
 namespace TombolaGame.Services
@@ -11,12 +13,14 @@ namespace TombolaGame.Services
     {
         private readonly ITombolaRepository _tombolaRepository;
         private readonly IAwardRepository _awardRepository;
+        private readonly IPlayerRepository _playerRepository;
         private readonly IWinnerSelectionService _winnerSelectionService;
 
-        public TombolaService(ITombolaRepository tombolaRepository, IAwardRepository awardRepository, IWinnerSelectionService winnerSelectionService)
+        public TombolaService(ITombolaRepository tombolaRepository, IAwardRepository awardRepository, IPlayerRepository playerRepository,IWinnerSelectionService winnerSelectionService)
         {
             _tombolaRepository = tombolaRepository;
             _awardRepository = awardRepository;
+            _playerRepository = playerRepository;
             _winnerSelectionService = winnerSelectionService;
         }
 
@@ -38,7 +42,9 @@ namespace TombolaGame.Services
 
         public async Task<TombolaResponse> CreateTombolaAsync(TombolaRequest request)
         {
-            var tombola = ModelMapper.ToTombola(request);            
+            ValidateTombolaRequest(request);
+
+            var tombola = ModelMapper.ToTombola(request);
 
             var createdTombola = await _tombolaRepository.AddAsync(tombola);
             return ModelMapper.ToResponse(createdTombola);
@@ -46,6 +52,8 @@ namespace TombolaGame.Services
 
         public async Task<TombolaResponse> UpdateTombolaAsync(int tombolaId, TombolaRequest request)
         {
+            ValidateTombolaRequest(request);
+
             var existingTombola = await _tombolaRepository.GetByIdAsync(tombolaId);
             if (existingTombola == null)
                 throw new EntityNotFoundException("Tombola", tombolaId);
@@ -71,14 +79,24 @@ namespace TombolaGame.Services
             if (tombola == null)
                 throw new EntityNotFoundException("Tombola", tombolaId);
 
-            if (tombola.State != "Waiting")
+            if (tombola.State != TombolaState.Waiting)
                 throw new InvalidOperationException("Tombola is not in 'Waiting' state.");
 
             if (tombola.Players.Count >= tombola.MaximumPlayers)
                 throw new InvalidOperationException("Tombola is full.");
 
-            var player = new Player { Name = playerName };
+            var player = await _playerRepository.GetByNameAsync(playerName);
+            if (player == null)
+            {
+                player = new Player { Name = playerName };
+                await _playerRepository.AddAsync(player);
+            }
+
+            if (tombola.Players.Any(p => p.Id == player.Id))
+                throw new InvalidOperationException("Player is already joined in this tombola.");
+
             tombola.Players.Add(player);
+            await _tombolaRepository.UpdateAsync(tombola);
 
             await _tombolaRepository.UpdateAsync(tombola);
 
@@ -94,8 +112,8 @@ namespace TombolaGame.Services
             var tombola = await _tombolaRepository.GetByIdAsync(tombolaId)
                 ?? throw new EntityNotFoundException("Tombola", tombolaId);
 
-            if (tombola.State != "Waiting")
-                throw new InvalidOperationException("Cannot assign award. Tombola is not in 'Waiting' state.");
+            if (tombola.State != TombolaState.Waiting)
+                throw new InvalidOperationException($"Cannot assign award. Current state is '{tombola.State}'.");
 
             var award = await _awardRepository.GetByIdAsync(awardId)
                 ?? throw new EntityNotFoundException("Award", awardId);
@@ -113,19 +131,43 @@ namespace TombolaGame.Services
             if (tombola == null)
                 throw new EntityNotFoundException("Tombola", tombolaId);
 
+            if (tombola.State != TombolaState.Waiting)
+                throw new InvalidOperationException($"Cannot start tombola. Current state is '{tombola.State}'.");
+
             if (tombola.Players.Count < tombola.MinimumPlayers)
                 throw new InvalidOperationException("Cannot start tombola. Not enough players.");
 
             if (tombola.Awards.Count < tombola.MinimumAwards)
                 throw new InvalidOperationException("Cannot start tombola. Not enough awards.");
 
-            tombola.State = "Active";
+            tombola.State = TombolaState.InProgress;
             await _tombolaRepository.UpdateAsync(tombola);
 
             tombola.Winners = (await _winnerSelectionService.DrawWinnersAsync(tombola)).ToList();
 
-            tombola.State = "Completed";
+            tombola.State = TombolaState.Finished;
             await _tombolaRepository.UpdateAsync(tombola);
+        }
+
+        private void ValidateTombolaRequest(TombolaRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Name))
+                throw new ValidationException("Name is required.");
+
+            if (request.MinPlayers < 1)
+                throw new ValidationException("Minimum players must be at least 1.");
+
+            if (request.MaxPlayers < request.MinPlayers)
+                throw new ValidationException("Maximum players cannot be less than minimum players.");
+
+            if (request.MinAwards < 1)
+                throw new ValidationException("Minimum awards must be at least 1.");
+
+            if (request.MaxAwards < request.MinAwards)
+                throw new ValidationException("Maximum awards cannot be less than minimum awards.");
+
+            if (request.StrategyType != null && !Enum.IsDefined(typeof(StrategyType), request.StrategyType))
+                throw new ValidationException("Invalid strategy type.");
         }
     }
 }

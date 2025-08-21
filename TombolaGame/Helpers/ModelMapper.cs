@@ -1,5 +1,6 @@
 ﻿using TombolaGame.Models.Mappers;
 using TombolaGame.Models;
+using TombolaGame.Enums;
 
 namespace TombolaGame.Helpers
 {
@@ -14,7 +15,7 @@ namespace TombolaGame.Helpers
                 MaximumPlayers = request.MaxPlayers,
                 MinimumAwards = request.MinAwards,
                 MaximumAwards = request.MaxAwards,
-                StrategyType = request.StrategyType ?? "OnePrizePerPlayer"
+                StrategyType = request.StrategyType ?? StrategyType.OnePrizePerPlayer
             };
         }
 

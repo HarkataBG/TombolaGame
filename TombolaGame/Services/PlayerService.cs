@@ -31,6 +31,10 @@ public class PlayerService : IPlayerService
 
     public async Task<PlayerResponse> CreatePlayerAsync(PlayerRequest request)
     {
+        var existingPlayer = await _playerRepository.GetByNameAsync(request.Name);
+        if (existingPlayer != null)
+            throw new InvalidOperationException($"Player with name '{request.Name}' already exists.");
+
         var player = new Player
         {
             Name = request.Name,
@@ -45,6 +49,10 @@ public class PlayerService : IPlayerService
     {
         var player = await _playerRepository.GetByIdAsync(id)
             ?? throw new EntityNotFoundException("Player", id);
+
+        var existingPlayer = await _playerRepository.GetByNameAsync(request.Name);
+        if (existingPlayer != null && existingPlayer.Id != id)
+            throw new InvalidOperationException($"Another player with name '{request.Name}' already exists.");
 
         player.Name = request.Name;
         player.Weight = request.Weight;

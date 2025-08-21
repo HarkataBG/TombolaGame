@@ -1,4 +1,7 @@
-﻿namespace TombolaGame.Models
+﻿using MassTransit;
+using TombolaGame.Enums;
+
+namespace TombolaGame.Models
 {
     public class Tombola
     {
@@ -14,7 +17,7 @@
         public int MinimumAwards { get; set; } = 1;
         public int MaximumAwards { get; set; } = 2;
 
-        public string State { get; set; } = "Waiting";
-        public string StrategyType { get; set; } = "OnePrizePerPlayer";
+        public TombolaState State { get; set; } = TombolaState.Waiting;
+        public StrategyType StrategyType { get; set; } = StrategyType.OnePrizePerPlayer;
     }
 }

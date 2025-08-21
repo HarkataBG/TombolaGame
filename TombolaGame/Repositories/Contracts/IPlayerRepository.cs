@@ -6,6 +6,7 @@ namespace TombolaGame.Repositories.Contracts
     {
         Task<IEnumerable<Player>> GetAllAsync();
         Task<Player?> GetByIdAsync(int id);
+        Task<Player?> GetByNameAsync(string name);
         Task AddAsync(Player player);
         Task UpdateAsync(Player player);
         Task DeleteAsync(Player player);
