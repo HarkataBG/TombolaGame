@@ -97,3 +97,8 @@ Winners are chosen completely at random, without restrictions.
 **WeightedSelection (2)**  
 Selection is based on weights or probabilities assigned to players.  
 👉 For example, a player with more entries has a higher chance of winning. 
+
+### Example Swagger response
+<img width="1530" height="542" alt="image" src="https://github.com/user-attachments/assets/096e8155-4b63-4451-98ca-206698b393a0" />
+
+
