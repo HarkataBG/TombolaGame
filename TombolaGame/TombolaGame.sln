@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34408.163
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TombolaGame", "TombolaGame.csproj", "{BA2ABC88-98CE-4C2E-8F5D-856CEC93C2F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TombolaGame", "TombolaGame.csproj", "{BA2ABC88-98CE-4C2E-8F5D-856CEC93C2F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TombolaGame.Tests", "..\TombolaGame.Tests\TombolaGame.Tests.csproj", "{4366B421-70DA-4CA0-B70B-87DB3C96261D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{BA2ABC88-98CE-4C2E-8F5D-856CEC93C2F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA2ABC88-98CE-4C2E-8F5D-856CEC93C2F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA2ABC88-98CE-4C2E-8F5D-856CEC93C2F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4366B421-70DA-4CA0-B70B-87DB3C96261D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4366B421-70DA-4CA0-B70B-87DB3C96261D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4366B421-70DA-4CA0-B70B-87DB3C96261D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4366B421-70DA-4CA0-B70B-87DB3C96261D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
