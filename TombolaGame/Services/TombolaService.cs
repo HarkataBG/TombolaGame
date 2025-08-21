@@ -120,6 +120,10 @@ namespace TombolaGame.Services
             if (award.TombolaId != null && award.TombolaId != tombolaId)
                 throw new InvalidOperationException("Award is already assigned to another tombola.");
 
+            var currentAwardCount = tombola.Awards.Count();
+            if (currentAwardCount >= tombola.MaximumAwards)
+                throw new InvalidOperationException($"Cannot assign more than {tombola.MaximumAwards} awards to this tombola.");
+
             award.TombolaId = tombola.Id;
             await _awardRepository.UpdateAsync(award);
         }
