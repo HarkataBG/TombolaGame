@@ -9,7 +9,7 @@
 
         public int MinimumPlayers { get; set; }
         public int MaximumPlayers { get; set; }
-        public int MinimumAwars { get; set; }
+        public int MinimumAwards { get; set; }
         public int MaximumAwards { get; set; }
 
         public List<string> PlayerNames { get; set; } = new();

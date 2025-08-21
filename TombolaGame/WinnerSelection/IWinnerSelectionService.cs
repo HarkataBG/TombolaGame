@@ -4,5 +4,5 @@ namespace TombolaGame.WinnerSelection;
 
 public interface IWinnerSelectionService
 {
-    Task<IEnumerable<Player>> DrawWinnersAsync(Tombola tombola);
+    Task<IEnumerable<TombolaWinner>> DrawWinnersAsync(Tombola tombola);
 }

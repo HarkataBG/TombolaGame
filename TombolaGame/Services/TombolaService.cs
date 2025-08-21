@@ -100,7 +100,7 @@ namespace TombolaGame.Services
             var award = await _awardRepository.GetByIdAsync(awardId)
                 ?? throw new EntityNotFoundException("Award", awardId);
 
-            if (award.TombolaId != 0)
+            if (award.TombolaId != null && award.TombolaId != tombolaId)
                 throw new InvalidOperationException("Award is already assigned to another tombola.");
 
             award.TombolaId = tombola.Id;

@@ -29,12 +29,14 @@ namespace TombolaGame.Helpers
 
                 MinimumPlayers = tombola.MinimumPlayers,
                 MaximumPlayers = tombola.MaximumPlayers,
-                MinimumAwars = tombola.MinimumAwards,
+                MinimumAwards = tombola.MinimumAwards,
                 MaximumAwards = tombola.MaximumAwards,
 
                 PlayerNames = tombola.Players.Select(p => p.Name).ToList(),
                 AwardNames = tombola.Awards.Select(a => a.Name).ToList(),
-                WinnerNames = tombola.Winners.Select(w => w.Name).ToList()
+                WinnerNames = tombola.Winners
+                    .Select(w => w.Player.Name)
+                    .ToList()
             };
         }
 

@@ -16,26 +16,30 @@ namespace TombolaGame.Services
             _publishEndpoint = publishEndpoint;
         }
 
-        public async Task<IEnumerable<Player>> DrawWinnersAsync(Tombola tombola)
+        public async Task<IEnumerable<TombolaWinner>> DrawWinnersAsync(Tombola tombola)
         {
-            var winners = new List<Player>();
+            var winners = new List<TombolaWinner>();
             var strategy = _strategyFactory.GetStrategy(tombola.StrategyType);
 
             foreach (var award in tombola.Awards)
             {
-                var winner = strategy.SelectWinner(tombola.Players, tombola.Winners);
-                if (winner == null) break;
+                var player = strategy.SelectWinner(tombola.Players, tombola.Winners.Select(w => w.Player).ToList());
+                if (player == null) break;
 
-                winners.Add(winner);
+                winners.Add(new TombolaWinner
+                {
+                    TombolaId = tombola.Id,
+                    PlayerId = player.Id
+                });
 
                 await _publishEndpoint.Publish(new WinnerSelectedEvent(
                     tombola.Id,
-                    winner.Id,
-                    winner.Name
+                    player.Id,
+                    player.Name
                 ));
             }
 
             return winners;
-        }      
+        }
     }
 }

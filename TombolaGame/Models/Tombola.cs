@@ -4,9 +4,10 @@
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public List<Player> Players { get; set; } = new();
-        public List<Award> Awards { get; set; } = new();
-        public List<Player> Winners { get; set; } = new();
+
+        public ICollection<Player> Players { get; set; } = new List<Player>();
+        public ICollection<Award> Awards { get; set; } = new List<Award>();
+        public ICollection<TombolaWinner> Winners { get; set; } = new List<TombolaWinner>();
 
         public int MinimumPlayers { get; set; } = 2;
         public int MaximumPlayers { get; set; } = 3;

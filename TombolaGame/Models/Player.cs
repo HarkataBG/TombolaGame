@@ -6,6 +6,9 @@ namespace TombolaGame.Models
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public int Weight { get; set; } = 1;
+
         public ICollection<Tombola> Tombolas { get; set; } = new List<Tombola>();
+
+        public ICollection<TombolaWinner> TombolaWins { get; set; } = new List<TombolaWinner>();
     }
 }

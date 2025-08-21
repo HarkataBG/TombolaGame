@@ -30,16 +30,21 @@ public class WinnerSelectedConsumer : IConsumer<WinnerSelectedEvent>
             return;
         }
 
-        if (tombola.Winners.Any(w => w.Id == message.PlayerId))
+        if (tombola.Winners.Any(w => w.PlayerId == message.PlayerId))
         {
             _logger.LogWarning("Winner {PlayerId} already exists for Tombola {TombolaId}.", message.PlayerId, tombola.Id);
             return;
         }
 
-        tombola.Winners.Add(new Player
+        tombola.Winners.Add(new TombolaWinner
         {
-            Id = message.PlayerId,
-            Name = message.PlayerName
+            TombolaId = tombola.Id,
+            PlayerId = message.PlayerId,
+            Player = new Player
+            {
+                Id = message.PlayerId,
+                Name = message.PlayerName
+            }
         });
 
         await _dbContext.SaveChangesAsync();
