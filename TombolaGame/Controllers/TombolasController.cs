@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TombolaGame.Services;
-using TombolaGame.Models;
-using TombolaGame.Models.Mappers;
 using TombolaGame.Exceptions;
+using TombolaGame.Models.Mappers;
+using TombolaGame.Services;
 
 namespace TombolaGame.Controllers;
 
@@ -41,8 +40,8 @@ public class TombolasController : ControllerBase
     [HttpPut("{tombolaId}")]
     public async Task<IActionResult> UpdateTombola(int tombolaId, [FromBody] TombolaRequest request)
     {
-        var updated = await _tombolaService.UpdateTombolaAsync(tombolaId, request);  
-        return Accepted(updated); 
+        var updated = await _tombolaService.UpdateTombolaAsync(tombolaId, request);
+        return Accepted(updated);
     }
 
     [HttpDelete("{tombolaId}")]

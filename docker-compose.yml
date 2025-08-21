@@ -1,0 +1,46 @@
+version: '3.4'
+
+services:
+  tombola.db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: TombolaDb
+    ports:
+      - "5432:5432"
+    volumes:
+      - tombola_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  tombola.rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  tombola.api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:8080"
+      - "5001:8081"
+    depends_on:
+      tombola.db:
+        condition: service_healthy
+      tombola.rabbitmq:
+        condition: service_healthy
+
+volumes:
+  tombola_data:

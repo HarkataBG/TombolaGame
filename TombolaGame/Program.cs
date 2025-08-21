@@ -21,7 +21,8 @@ namespace TombolaGame
             {
                 x.UsingRabbitMq((context, cfg) =>
                 {
-                    cfg.Host("localhost", "/", h =>
+                    // Change tombola.rabbitmq to localhost for local testing
+                    cfg.Host("tombola.rabbitmq", "/", h =>
                     {
                         h.Username("guest");
                         h.Password("guest");
@@ -60,6 +61,31 @@ namespace TombolaGame
             builder.Services.AddScoped<IWinnerSelectionService, WinnerSelectionService>();
 
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<TombolaContext>();
+                var retries = 5;
+                var delay = TimeSpan.FromSeconds(5);
+
+                for (int i = 0; i < retries; i++)
+                {
+                    try
+                    {
+                        db.Database.Migrate();
+                        break; 
+                    }
+                    catch (Exception ex)
+                    {
+                        if (i == retries - 1)
+                            throw; 
+
+                        Console.WriteLine($"Migration was unsuccessful, attempt {i + 1}/{retries}." +
+                            $" Error: {ex.Message}. Will retry after {delay.TotalSeconds} seconds.");
+                        Thread.Sleep(delay);
+                    }
+                }
+            }
 
             app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
