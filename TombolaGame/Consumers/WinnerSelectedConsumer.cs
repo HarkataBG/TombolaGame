@@ -1,5 +1,6 @@
 ﻿using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using System;
 using TombolaGame.Data;
 using TombolaGame.Events;
 using TombolaGame.Models;
@@ -7,10 +8,12 @@ using TombolaGame.Models;
 public class WinnerSelectedConsumer : IConsumer<WinnerSelectedEvent>
 {
     private readonly TombolaContext _dbContext;
+    private readonly ILogger<WinnerSelectedConsumer> _logger;
 
-    public WinnerSelectedConsumer(TombolaContext dbContext)
+    public WinnerSelectedConsumer(TombolaContext dbContext, ILogger<WinnerSelectedConsumer> logger)
     {
         _dbContext = dbContext;
+        _logger = logger;
     }
 
     public async Task Consume(ConsumeContext<WinnerSelectedEvent> context)
@@ -23,13 +26,15 @@ public class WinnerSelectedConsumer : IConsumer<WinnerSelectedEvent>
 
         if (tombola == null)
         {
-            Console.WriteLine($"[ERROR] Tombola {message.TombolaId} not found.");
+            _logger.LogError("Tombola {TombolaId} not found.", message.TombolaId);
             return;
         }
 
-        // предотвратяване на дублиране
         if (tombola.Winners.Any(w => w.Id == message.PlayerId))
+        {
+            _logger.LogWarning("Winner {PlayerId} already exists for Tombola {TombolaId}.", message.PlayerId, tombola.Id);
             return;
+        }
 
         tombola.Winners.Add(new Player
         {
@@ -39,6 +44,6 @@ public class WinnerSelectedConsumer : IConsumer<WinnerSelectedEvent>
 
         await _dbContext.SaveChangesAsync();
 
-        Console.WriteLine($"[DB] Winner {message.PlayerName} saved for Tombola {tombola.Id}");
+        _logger.LogInformation("Winner {PlayerName} saved for Tombola {TombolaId}.", message.PlayerName, tombola.Id);
     }
 }

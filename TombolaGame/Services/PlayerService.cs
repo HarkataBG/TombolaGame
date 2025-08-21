@@ -1,4 +1,7 @@
-﻿using TombolaGame.Models;
+﻿using TombolaGame.Exceptions;
+using TombolaGame.Helpers;
+using TombolaGame.Models;
+using TombolaGame.Models.Mappers;
 using TombolaGame.Repositories.Contracts;
 
 namespace TombolaGame.Services;
@@ -7,21 +10,55 @@ public class PlayerService : IPlayerService
 {
     private readonly IPlayerRepository _playerRepository;
 
-    public PlayerService(IPlayerRepository repository) => _playerRepository = repository;
-
-    public async Task<Player> CreatePlayerAsync(string name, int weight = 1)
+    public PlayerService(IPlayerRepository playerRepository)
     {
-        var player = new Player { Name = name, Weight = weight };
-        return await _playerRepository.AddAsync(player);
+        _playerRepository = playerRepository;
     }
 
-    public async Task<IEnumerable<Player>> GetPlayersAsync()
+    public async Task<IEnumerable<PlayerResponse>> GetAllPlayersAsync()
     {
-        return await _playerRepository.GetAllAsync();
+        var players = await _playerRepository.GetAllAsync();
+        return players.Select(ModelMapper.ToResponse);
     }
 
-    public async Task<Player?> GetPlayerAsync(int id)
+    public async Task<PlayerResponse> GetPlayerByIdAsync(int id)
     {
-        return await _playerRepository.GetByIdAsync(id);
+        var player = await _playerRepository.GetByIdAsync(id)
+            ?? throw new EntityNotFoundException("Player", id);
+
+        return ModelMapper.ToResponse(player);
     }
+
+    public async Task<PlayerResponse> CreatePlayerAsync(PlayerRequest request)
+    {
+        var player = new Player
+        {
+            Name = request.Name,
+            Weight = request.Weight
+        };
+
+        await _playerRepository.AddAsync(player);
+        return ModelMapper.ToResponse(player);
+    }
+
+    public async Task<PlayerResponse> UpdatePlayerAsync(int id, PlayerRequest request)
+    {
+        var player = await _playerRepository.GetByIdAsync(id)
+            ?? throw new EntityNotFoundException("Player", id);
+
+        player.Name = request.Name;
+        player.Weight = request.Weight;
+
+        await _playerRepository.UpdateAsync(player);
+        return ModelMapper.ToResponse(player);
+    }
+
+    public async Task DeletePlayerAsync(int id)
+    {
+        var player = await _playerRepository.GetByIdAsync(id)
+            ?? throw new EntityNotFoundException("Player", id);
+
+        await _playerRepository.DeleteAsync(player);
+    }
+
 }

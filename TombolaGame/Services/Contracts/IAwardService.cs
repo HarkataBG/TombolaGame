@@ -1,10 +1,12 @@
-﻿using TombolaGame.Models;
+﻿using TombolaGame.Models.Mappers;
 
 namespace TombolaGame.Services;
 
 public interface IAwardService
 {
-    Task<Award> CreateAwardAsync(string name);
-    Task<IEnumerable<Award>> GetAwardsAsync();
-    Task<Award?> AssignToTombolaAsync(int awardId, int tombolaId);
+    Task<IEnumerable<AwardResponse>> GetAllAwardsAsync();
+    Task<AwardResponse> GetAwardByIdAsync(int id);
+    Task<AwardResponse> CreateAwardAsync(AwardRequest request);
+    Task<AwardResponse> UpdateAwardAsync(int id, AwardRequest request);
+    Task DeleteAwardAsync(int id);
 }

@@ -6,10 +6,6 @@ namespace TombolaGame.Models
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public int Weight { get; set; } = 1;
-
-        internal object Select(Func<object, object> value)
-        {
-            throw new NotImplementedException();
-        }
+        public ICollection<Tombola> Tombolas { get; set; } = new List<Tombola>();
     }
 }

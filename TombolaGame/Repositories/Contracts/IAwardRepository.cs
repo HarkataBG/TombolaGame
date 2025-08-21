@@ -8,4 +8,5 @@ public interface IAwardRepository
     Task<IEnumerable<Award>> GetAllAsync();
     Task<Award?> GetByIdAsync(int id);
     Task UpdateAsync(Award award);
+    Task DeleteAsync(Award award);
 }

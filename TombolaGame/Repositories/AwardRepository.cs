@@ -31,4 +31,10 @@ public class AwardRepository : IAwardRepository
         _context.Awards.Update(award);
         await _context.SaveChangesAsync();
     }
+
+    public async Task DeleteAsync(Award award)
+    {
+        _context.Awards.Remove(award);
+        await _context.SaveChangesAsync();
+    }
 }

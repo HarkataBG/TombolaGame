@@ -1,36 +1,55 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TombolaGame.Models;
 using TombolaGame.Services;
-
-namespace TombolaApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 public class AwardsController : ControllerBase
 {
-    private readonly IAwardService _service;
+    private readonly IAwardService _awardService;
 
-    public AwardsController(IAwardService service) => _service = service;
-
-    [HttpPost]
-    public async Task<IActionResult> AddAward([FromBody] Award award)
-    {
-        var created = await _service.CreateAwardAsync(award.Name);
-        return CreatedAtAction(nameof(GetAwards), new { id = created.Id }, created);
-    }
+    public AwardsController(IAwardService service) => _awardService = service;
 
     [HttpGet]
-    public async Task<IActionResult> GetAwards()
+    public async Task<IActionResult> GetAllAwards()
     {
-        var awards = await _service.GetAwardsAsync();
+        var awards = await _awardService.GetAllAwardsAsync();
         return Ok(awards);
     }
 
-    [HttpPost("{awardId}/assign/{tombolaId}")]
-    public async Task<IActionResult> AssignToTombola(int awardId, int tombolaId)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetAwardById(int id)
     {
-        var updated = await _service.AssignToTombolaAsync(awardId, tombolaId);
-        if (updated == null) return NotFound();
+        var award = await _awardService.GetAwardByIdAsync(id);
+        if (award == null)
+            return NotFound(new { message = $"Award with ID {id} not found." });
+
+        return Ok(award);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> AddAward([FromBody] AwardRequest request)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var created = await _awardService.CreateAwardAsync(request);
+        return CreatedAtAction(nameof(GetAwardById), new { id = created.Id }, created);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateAward(int id, [FromBody] AwardRequest request)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var updated = await _awardService.UpdateAwardAsync(id, request);
         return Ok(updated);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteAward(int id)
+    {
+        await _awardService.DeleteAwardAsync(id);
+        return NoContent();
     }
 }

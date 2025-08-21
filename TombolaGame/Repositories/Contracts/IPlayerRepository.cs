@@ -4,8 +4,10 @@ namespace TombolaGame.Repositories.Contracts
 {
     public interface IPlayerRepository
     {
-        Task<Player> AddAsync(Player player);
         Task<IEnumerable<Player>> GetAllAsync();
         Task<Player?> GetByIdAsync(int id);
+        Task AddAsync(Player player);
+        Task UpdateAsync(Player player);
+        Task DeleteAsync(Player player);
     }
 }

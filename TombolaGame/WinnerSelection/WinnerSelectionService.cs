@@ -26,7 +26,6 @@ namespace TombolaGame.Services
                 var winner = strategy.SelectWinner(tombola.Players, tombola.Winners);
                 if (winner == null) break;
 
-                tombola.Winners.Add(winner);
                 winners.Add(winner);
 
                 await _publishEndpoint.Publish(new WinnerSelectedEvent(
@@ -37,22 +36,6 @@ namespace TombolaGame.Services
             }
 
             return winners;
-        }
-
-        public async Task<Player?> DrawWinnerAsync(Tombola tombola)
-        {
-            var strategy = _strategyFactory.GetStrategy(tombola.StrategyType);
-            var winner = strategy.SelectWinner(tombola.Players, tombola.Winners);
-            if (winner != null)
-            {
-                tombola.Winners.Add(winner);
-                await _publishEndpoint.Publish(new WinnerSelectedEvent(
-                    tombola.Id,
-                    winner.Id,
-                    winner.Name
-                ));
-            }
-            return winner;
-        }
+        }      
     }
 }

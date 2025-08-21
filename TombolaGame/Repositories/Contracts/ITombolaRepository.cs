@@ -8,4 +8,5 @@ public interface ITombolaRepository
     Task<IEnumerable<Tombola>> GetAllAsync();
     Task<Tombola?> GetByIdAsync(int id);
     Task UpdateAsync(Tombola tombola);
+    Task DeleteAsync(Tombola tombola);
 }

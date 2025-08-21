@@ -1,39 +1,67 @@
-﻿using TombolaGame.Models;
+﻿using TombolaGame.Exceptions;
+using TombolaGame.Models.Mappers;
+using TombolaGame.Models;
 using TombolaGame.Repositories;
-
-namespace TombolaGame.Services;
+using TombolaGame.Services;
+using TombolaGame.Helpers;
 
 public class AwardService : IAwardService
 {
-    private readonly IAwardRepository _awardRepo;
-    private readonly ITombolaRepository _tombolaRepo;
+    private readonly IAwardRepository _awardRepository;
 
-    public AwardService(IAwardRepository awardRepo, ITombolaRepository tombolaRepo)
+    public AwardService(IAwardRepository awardRepository)
     {
-        _awardRepo = awardRepo;
-        _tombolaRepo = tombolaRepo;
+        _awardRepository = awardRepository;
     }
 
-    public async Task<Award> CreateAwardAsync(string name)
+    public async Task<IEnumerable<AwardResponse>> GetAllAwardsAsync()
     {
-        var award = new Award { Name = name };
-        return await _awardRepo.AddAsync(award);
+        var awards = await _awardRepository.GetAllAsync();
+        return awards.Select(ModelMapper.ToResponse);
     }
 
-    public async Task<IEnumerable<Award>> GetAwardsAsync()
+    public async Task<AwardResponse> GetAwardByIdAsync(int id)
     {
-        return await _awardRepo.GetAllAsync();
+        var award = await _awardRepository.GetByIdAsync(id);
+        if (award == null)
+            throw new EntityNotFoundException("Award", id);
+
+        return ModelMapper.ToResponse(award);
     }
 
-    public async Task<Award?> AssignToTombolaAsync(int awardId, int tombolaId)
+    public async Task<AwardResponse> CreateAwardAsync(AwardRequest request)
     {
-        var award = await _awardRepo.GetByIdAsync(awardId);
-        var tombola = await _tombolaRepo.GetByIdAsync(tombolaId);
+        var award = new Award
+        {
+            Name = request.Name
+        };
 
-        if (award == null || tombola == null) return null;
+        await _awardRepository.AddAsync(award);
 
-        award.TombolaId = tombolaId;
-        await _awardRepo.UpdateAsync(award);
-        return award;
+        return ModelMapper.ToResponse(award);
+    }
+
+    public async Task<AwardResponse> UpdateAwardAsync(int id, AwardRequest request)
+    {
+        var award = await _awardRepository.GetByIdAsync(id);
+        if (award == null)
+            throw new EntityNotFoundException("Award", id);
+
+        award.Name = request.Name;
+
+        await _awardRepository.UpdateAsync(award);
+
+        return ModelMapper.ToResponse(award);
+    }
+
+    public async Task DeleteAwardAsync(int id)
+    {
+        var award = await _awardRepository.GetByIdAsync(id)
+            ?? throw new EntityNotFoundException("Award", id);
+
+        if (award.TombolaId != null)
+            throw new InvalidOperationException("Cannot delete award assigned to a tombola.");
+
+        await _awardRepository.DeleteAsync(award);
     }
 }

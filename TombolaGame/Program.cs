@@ -8,6 +8,7 @@ using MassTransit;
 using TombolaGame.WinnerSelection;
 using TombolaGame.WinnerSelection.Strategies;
 using TombolaGame.WinnerSelector.Strategies;
+using TombolaGame.Middlewares;
 
 namespace TombolaGame
 {
@@ -56,6 +57,8 @@ namespace TombolaGame
             builder.Services.AddScoped<IWinnerSelectionService, WinnerSelectionService>();
 
             var app = builder.Build();
+
+            app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
